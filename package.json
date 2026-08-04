@@ -1,0 +1,31 @@
+{
+  "name": "focuszone",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "expo": "~57.0.9",
+    "expo-audio": "~57.0.3",
+    "expo-dev-client": "^57.0.10",
+    "expo-haptics": "~57.0.1",
+    "expo-keep-awake": "~57.0.1",
+    "expo-sensors": "~57.0.2",
+    "expo-status-bar": "~57.0.1",
+    "focuszone-fullscreen-alarm": "file:modules/focuszone-fullscreen-alarm",
+    "react": "19.2.3",
+    "react-native": "0.86.2"
+  },
+  "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
+    "@types/react": "~19.2.2",
+    "eas-cli": "^21.5.0",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}

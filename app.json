@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "FocusZone",
+    "slug": "FocusZone",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
+      "package": "com.anonymous.FocusZone"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-audio",
+      "focuszone-fullscreen-alarm"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "25a53747-e4f2-4db2-8261-5d7d11895953"
+      }
+    },
+    "owner": "echolento"
+  }
+}

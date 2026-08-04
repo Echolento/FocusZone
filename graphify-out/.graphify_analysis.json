@@ -1,0 +1,274 @@
+{
+  "communities": {
+    "0": [
+      "app_app",
+      "app_appcontent",
+      "app_page",
+      "app_styles",
+      "app_tsx_app",
+      "app_usekeepawake",
+      "app_usetimer",
+      "index",
+      "src_screens_activesessionscreen",
+      "src_screens_activesessionscreen_activesessionscreen",
+      "src_screens_activesessionscreen_formattime",
+      "src_screens_activesessionscreen_styles",
+      "src_screens_armingscreen",
+      "src_screens_armingscreen_armingscreen",
+      "src_screens_armingscreen_styles",
+      "src_screens_sessionendscreen",
+      "src_screens_sessionendscreen_sessionendscreen",
+      "src_screens_sessionendscreen_sessionendscreenprops",
+      "src_screens_sessionendscreen_styles",
+      "src_screens_violationscreen",
+      "src_screens_violationscreen_styles",
+      "src_screens_violationscreen_violationscreen",
+      "src_sessioncontext_usesession",
+      "src_types_alertstyle",
+      "src_usealarm",
+      "src_usealarm_startalarm",
+      "src_usealarm_usealarm",
+      "src_usemotion_usemotion"
+    ],
+    "1": [
+      "src_screens_homescreen",
+      "src_screens_homescreen_homescreen",
+      "src_screens_homescreen_homescreenprops",
+      "src_screens_homescreen_styles",
+      "src_screens_setzonescreen",
+      "src_screens_setzonescreen_setzonescreenprops",
+      "src_screens_setzonescreen_styles",
+      "src_sessioncontext",
+      "src_sessioncontext_initialsession",
+      "src_sessioncontext_sessionaction",
+      "src_sessioncontext_sessioncontext",
+      "src_sessioncontext_sessioncontextvalue",
+      "src_sessioncontext_sessionprovider",
+      "src_sessioncontext_sessionreducer",
+      "src_types",
+      "src_types_baselinegravity",
+      "src_types_default_settings",
+      "src_types_duration_presets",
+      "src_types_sensitivity",
+      "src_types_sensitivity_thresholds",
+      "src_types_sessiondata",
+      "src_types_sessionstate",
+      "src_types_settings",
+      "src_types_zonerect",
+      "src_usemotion"
+    ],
+    "2": [
+      "expo",
+      "expo_av",
+      "expo_camera",
+      "expo_haptics",
+      "expo_keep_awake",
+      "expo_sensors",
+      "expo_status_bar",
+      "package_dependencies",
+      "package_dependencies_expo",
+      "package_dependencies_expo_av",
+      "package_dependencies_expo_camera",
+      "package_dependencies_expo_haptics",
+      "package_dependencies_expo_keep_awake",
+      "package_dependencies_expo_sensors",
+      "package_dependencies_expo_status_bar",
+      "package_dependencies_react",
+      "package_dependencies_react_native",
+      "package_dependencies_react_native_async_storage_async_storage",
+      "react",
+      "react_native",
+      "react_native_async_storage_async_storage",
+      "src_screens_setzonescreen_setzonescreen"
+    ],
+    "3": [
+      "app_adaptiveicon_backgroundcolor",
+      "app_adaptiveicon_backgroundimage",
+      "app_adaptiveicon_foregroundimage",
+      "app_adaptiveicon_monochromeimage",
+      "app_android_adaptiveicon",
+      "app_android_predictivebackgestureenabled",
+      "app_expo",
+      "app_expo_android",
+      "app_expo_icon",
+      "app_expo_ios",
+      "app_expo_name",
+      "app_expo_orientation",
+      "app_expo_slug",
+      "app_expo_userinterfacestyle",
+      "app_expo_version",
+      "app_expo_web",
+      "app_ios_supportstablet",
+      "app_json_app",
+      "app_web_favicon"
+    ],
+    "4": [
+      "package",
+      "package_devdependencies",
+      "package_devdependencies_types_react",
+      "package_devdependencies_typescript",
+      "package_main",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_android",
+      "package_scripts_ios",
+      "package_scripts_start",
+      "package_scripts_web",
+      "package_version",
+      "types_react",
+      "typescript"
+    ],
+    "5": [
+      "src_screens_settingsscreen",
+      "src_screens_settingsscreen_alert_options",
+      "src_screens_settingsscreen_sensitivity_options",
+      "src_screens_settingsscreen_settingsscreen",
+      "src_screens_settingsscreen_settingsscreenprops",
+      "src_screens_settingsscreen_styles",
+      "src_storage",
+      "src_storage_loadsettings",
+      "src_storage_savesettings"
+    ],
+    "6": [
+      "ref_expo_tsconfig_base",
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_extends"
+    ],
+    "7": [
+      "opencode_plugins_graphify",
+      "opencode_plugins_graphify_graphifyplugin",
+      "opencode_plugins_graphify_rationale_4"
+    ],
+    "8": [
+      "src_declarations_d",
+      "src_declarations_d_wav"
+    ]
+  },
+  "cohesion": {
+    "0": 0.12698412698412698,
+    "1": 0.14333333333333334,
+    "2": 0.09090909090909091,
+    "3": 0.10526315789473684,
+    "4": 0.13333333333333333,
+    "5": 0.3333333333333333,
+    "6": 0.4,
+    "7": 0.6666666666666666,
+    "8": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_sessioncontext_usesession",
+      "label": "useSession()",
+      "degree": 23
+    },
+    {
+      "id": "app_expo",
+      "label": "expo",
+      "degree": 10
+    },
+    {
+      "id": "app_appcontent",
+      "label": "AppContent()",
+      "degree": 7
+    },
+    {
+      "id": "app_android_adaptiveicon",
+      "label": "adaptiveIcon",
+      "degree": 5
+    },
+    {
+      "id": "package_dependencies_react",
+      "label": "react",
+      "degree": 5
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 5
+    },
+    {
+      "id": "src_sessioncontext_sessioncontextvalue",
+      "label": "SessionContextValue",
+      "degree": 5
+    },
+    {
+      "id": "src_types_zonerect",
+      "label": "ZoneRect",
+      "degree": 5
+    },
+    {
+      "id": "src_usealarm_usealarm",
+      "label": "useAlarm()",
+      "degree": 5
+    },
+    {
+      "id": "src_sessioncontext_sessionprovider",
+      "label": "SessionProvider()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "AppContent()",
+      "target": "react",
+      "source_files": [
+        "App.tsx",
+        "package.json"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "SessionProvider()",
+      "target": "react",
+      "source_files": [
+        "src/SessionContext.tsx",
+        "package.json"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "useTimer()",
+      "target": "useSession()",
+      "source_files": [
+        "App.tsx",
+        "src/SessionContext.tsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "useKeepAwake()",
+      "target": "useSession()",
+      "source_files": [
+        "App.tsx",
+        "src/SessionContext.tsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "AppContent()",
+      "target": "useSession()",
+      "source_files": [
+        "App.tsx",
+        "src/SessionContext.tsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
