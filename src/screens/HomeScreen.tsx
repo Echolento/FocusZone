@@ -153,7 +153,7 @@ export default function HomeScreen({ onSettings }: HomeScreenProps) {
           pointerEvents="none"
           style={[
             styles.dialThumb,
-            { left: thumbX - 10, top: thumbY - 10 },
+            { left: thumbX - 9, top: thumbY - 9 },
           ]}
         />
 
@@ -231,9 +231,9 @@ const styles = StyleSheet.create({
   },
   dialThumb: {
     position: 'absolute',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#4AFF8A',
     borderWidth: 3,
     borderColor: '#1A1A2E',
