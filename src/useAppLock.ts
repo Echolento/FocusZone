@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { AppState, BackHandler } from 'react-native';
 import { useSession } from './SessionContext';
 import { fireExitNotification } from './exitNotification';
+import { requestAlarmPermissions } from 'focuszone-fullscreen-alarm';
 
 export function useAppLock() {
   const { session, triggerViolation } = useSession();
@@ -10,6 +11,13 @@ export function useAppLock() {
     session.state === 'arming' ||
     session.state === 'active' ||
     session.state === 'violated';
+
+  useEffect(() => {
+    if (!isSessionActive) return;
+    try {
+      requestAlarmPermissions();
+    } catch {}
+  }, [isSessionActive]);
 
   useEffect(() => {
     if (!isSessionActive) return;
