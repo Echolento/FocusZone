@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   alertStyle: 'silent',
 };
 
-export const DURATION_PRESETS = [25, 50, 90];
+export const DURATION_PRESETS = [15, 30, 45, 60, 75, 90, 105, 120];
 
 export const SENSITIVITY_THRESHOLDS: Record<Sensitivity, number> = {
   low: 25,

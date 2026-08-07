@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  GestureResponderEvent,
+  PanResponder,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { useSession } from '../SessionContext';
 import { DURATION_PRESETS } from '../types';
 
@@ -7,9 +14,70 @@ interface HomeScreenProps {
   onSettings: () => void;
 }
 
+const DIAL_SIZE = 240;
+const DIAL_CENTER = DIAL_SIZE / 2;
+const DIAL_TICK_COUNT = 48;
+const DIAL_TICK_RADIUS = 96;
+const DIAL_LABEL_RADIUS = 69;
+const DIAL_STEP_DEGREES = 360 / DURATION_PRESETS.length;
+const DIAL_LABELS = DURATION_PRESETS;
+
+function dialAngle(event: GestureResponderEvent) {
+  return (
+    Math.atan2(
+      event.nativeEvent.locationY - DIAL_CENTER,
+      event.nativeEvent.locationX - DIAL_CENTER,
+    ) *
+    (180 / Math.PI)
+  );
+}
+
 export default function HomeScreen({ onSettings }: HomeScreenProps) {
-  const { session, startSession } = useSession();
-  const [selectedDuration, setSelectedDuration] = useState(DURATION_PRESETS[0]);
+  const { startSession } = useSession();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [liveAngle, setLiveAngle] = useState<number | null>(null);
+  const selectedIndexRef = useRef(0);
+  const selectedDuration = DURATION_PRESETS[selectedIndex];
+
+  const applyPointer = (event: GestureResponderEvent) => {
+    const angle = dialAngle(event);
+    const deg = ((angle % 360) + 360) % 360;
+    const index =
+      Math.round(deg / DIAL_STEP_DEGREES) % DURATION_PRESETS.length;
+    setLiveAngle(deg);
+    if (index !== selectedIndexRef.current) {
+      selectedIndexRef.current = index;
+      setSelectedIndex(index);
+    }
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: applyPointer,
+      onPanResponderMove: applyPointer,
+      onPanResponderRelease: () => {
+        setLiveAngle(null);
+      },
+      onPanResponderTerminate: () => {
+        setLiveAngle(null);
+      },
+    }),
+  ).current;
+
+  const activeTickCount = Math.min(
+    DIAL_TICK_COUNT,
+    liveAngle != null
+      ? Math.floor((liveAngle / 360) * DIAL_TICK_COUNT) + 1
+      : Math.round((selectedIndex / DURATION_PRESETS.length) * DIAL_TICK_COUNT) +
+        1,
+  );
+  const thumbAngle = liveAngle ?? selectedIndex * DIAL_STEP_DEGREES;
+  const thumbX =
+    DIAL_CENTER + Math.cos((thumbAngle * Math.PI) / 180) * DIAL_TICK_RADIUS;
+  const thumbY =
+    DIAL_CENTER + Math.sin((thumbAngle * Math.PI) / 180) * DIAL_TICK_RADIUS;
 
   return (
     <View style={styles.container}>
@@ -18,27 +86,81 @@ export default function HomeScreen({ onSettings }: HomeScreenProps) {
         Put your phone down and get to work.
       </Text>
 
-      <Text style={styles.durationLabel}>Duration</Text>
-      <View style={styles.durationRow}>
-        {DURATION_PRESETS.map((min) => (
-          <TouchableOpacity
-            key={min}
-            style={[
-              styles.durationBtn,
-              selectedDuration === min && styles.durationBtnActive,
-            ]}
-            onPress={() => setSelectedDuration(min)}
-          >
-            <Text
+      <View
+        style={styles.dial}
+        {...panResponder.panHandlers}
+        accessible
+        accessibilityRole="adjustable"
+        accessibilityLabel="Session duration"
+        accessibilityValue={{
+          min: DURATION_PRESETS[0],
+          max: DURATION_PRESETS[DURATION_PRESETS.length - 1],
+          now: selectedDuration,
+          text: `${selectedDuration} minutes`,
+        }}
+      >
+        <View style={styles.dialTrack} pointerEvents="none" />
+
+        {Array.from({ length: DIAL_TICK_COUNT }, (_, index) => {
+          const angle = (index / DIAL_TICK_COUNT) * 360;
+          const radians = (angle * Math.PI) / 180;
+          const isActive = index < activeTickCount;
+
+          return (
+            <View
+              key={index}
+              pointerEvents="none"
               style={[
-                styles.durationBtnText,
-                selectedDuration === min && styles.durationBtnTextActive,
+                styles.dialTick,
+                isActive && styles.dialTickActive,
+                {
+                  left:
+                    DIAL_CENTER + Math.cos(radians) * DIAL_TICK_RADIUS - 1,
+                  top:
+                    DIAL_CENTER + Math.sin(radians) * DIAL_TICK_RADIUS - 4,
+                  transform: [{ rotate: `${angle + 90}deg` }],
+                },
+              ]}
+            />
+          );
+        })}
+
+        {DIAL_LABELS.map((label, index) => {
+          const angle = index * DIAL_STEP_DEGREES;
+          const radians = (angle * Math.PI) / 180;
+
+          return (
+            <Text
+              key={label}
+              pointerEvents="none"
+              style={[
+                styles.dialLabel,
+                index === selectedIndex && styles.dialLabelActive,
+                {
+                  left:
+                    DIAL_CENTER + Math.cos(radians) * DIAL_LABEL_RADIUS - 12,
+                  top:
+                    DIAL_CENTER + Math.sin(radians) * DIAL_LABEL_RADIUS - 9,
+                },
               ]}
             >
-              {min} min
+              {label}
             </Text>
-          </TouchableOpacity>
-        ))}
+          );
+        })}
+
+        <View
+          pointerEvents="none"
+          style={[
+            styles.dialThumb,
+            { left: thumbX - 10, top: thumbY - 10 },
+          ]}
+        />
+
+        <View style={styles.dialCenter} pointerEvents="none">
+          <Text style={styles.dialValue}>{selectedDuration}</Text>
+          <Text style={styles.dialUnit}>MINS</Text>
+        </View>
       </View>
 
       <TouchableOpacity
@@ -75,41 +197,66 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 40,
   },
-  durationLabel: {
-    fontSize: 14,
-    color: '#888',
-    alignSelf: 'flex-start',
-    marginBottom: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  durationRow: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
+  dial: {
+    width: DIAL_SIZE,
+    height: DIAL_SIZE,
     marginBottom: 32,
-  },
-  durationBtn: {
-    flex: 1,
-    backgroundColor: '#1A1A2E',
-    borderRadius: 14,
-    paddingVertical: 16,
+    position: 'relative',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
+    justifyContent: 'center',
   },
-  durationBtnActive: {
-    borderColor: '#4AFF8A',
-    backgroundColor: '#0A2A1A',
+  dialTrack: {
+    position: 'absolute',
+    width: 192,
+    height: 192,
+    borderRadius: 96,
+    borderWidth: 24,
+    borderColor: '#1A1A2E',
   },
-  durationBtnText: {
+  dialTick: {
+    position: 'absolute',
+    width: 2,
+    height: 8,
+    backgroundColor: '#666',
+  },
+  dialTickActive: {
+    backgroundColor: '#4AFF8A',
+  },
+  dialLabel: {
+    position: 'absolute',
     color: '#666',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 12,
+    width: 24,
+    textAlign: 'center',
   },
-  durationBtnTextActive: {
+  dialThumb: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#4AFF8A',
+    borderWidth: 3,
+    borderColor: '#1A1A2E',
+  },
+  dialCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dialValue: {
+    color: '#FFFFFF',
+    fontSize: 34,
+    fontWeight: '300',
+    lineHeight: 40,
+  },
+  dialLabelActive: {
     color: '#4AFF8A',
+    fontWeight: '700',
+  },
+  dialUnit: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   startBtn: {
     width: '100%',

@@ -30,7 +30,12 @@ export function useMotion() {
   const settleRef = useRef(0);
 
   useEffect(() => {
-    const sub = Accelerometer.addListener(({ x, y, z }) => {
+    let sub: { remove: () => void } | undefined;
+    let cancelled = false;
+
+    Accelerometer.isAvailableAsync().then((available) => {
+      if (!available || cancelled) return;
+      sub = Accelerometer.addListener(({ x, y, z }) => {
       const { baseline, sensitivity, state } = dataRef.current;
       if (!baseline) return;
 
@@ -66,12 +71,14 @@ export function useMotion() {
           settleRef.current = 0;
         }
       }
+      });
+
+      Accelerometer.setUpdateInterval(UPDATE_INTERVAL);
     });
 
-    Accelerometer.setUpdateInterval(UPDATE_INTERVAL);
-
     return () => {
-      sub.remove();
+      cancelled = true;
+      sub?.remove();
     };
   }, []);
 

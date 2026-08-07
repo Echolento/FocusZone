@@ -27,35 +27,43 @@ export default function ArmingScreen() {
   useEffect(() => {
     if (countdown > 0) return;
 
-    const checkFlat = Accelerometer.addListener((sample) => {
-      lastSample.current = sample;
-      if (hasArmed.current) return;
-      const { x, y, z } = sample;
-      const mag = Math.sqrt(x * x + y * y + z * z);
-      const flatX = Math.abs(x) < 1.5;
-      const flatY = Math.abs(y) < 1.5;
-      if (flatX && flatY && Math.abs(mag - 9.8) < 1.5) {
-        hasArmed.current = true;
-        setBaseline({ x, y, z });
-        Accelerometer.setUpdateInterval(100);
-        armSession();
-      }
-    });
+    let cancelled = false;
+    let checkFlat: { remove: () => void } | undefined;
 
-    Accelerometer.setUpdateInterval(200);
+    Accelerometer.isAvailableAsync().then((available) => {
+      if (!available || cancelled) return;
+
+      checkFlat = Accelerometer.addListener((sample) => {
+        lastSample.current = sample;
+        if (hasArmed.current) return;
+        const { x, y, z } = sample;
+        const mag = Math.sqrt(x * x + y * y + z * z);
+        const flatX = Math.abs(x) < 1.5;
+        const flatY = Math.abs(y) < 1.5;
+        if (flatX && flatY && Math.abs(mag - 9.8) < 1.5) {
+          hasArmed.current = true;
+          setBaseline({ x, y, z });
+          Accelerometer.setUpdateInterval(100);
+          armSession();
+        }
+      });
+
+      Accelerometer.setUpdateInterval(200);
+    });
 
     const fallback = setTimeout(() => {
       if (!hasArmed.current) {
         hasArmed.current = true;
         setBaseline({ ...lastSample.current });
-        Accelerometer.setUpdateInterval(100);
+        if (checkFlat) Accelerometer.setUpdateInterval(100);
         armSession();
       }
-      checkFlat.remove();
+      checkFlat?.remove();
     }, 2000);
 
     return () => {
-      checkFlat.remove();
+      cancelled = true;
+      checkFlat?.remove();
       clearTimeout(fallback);
     };
   }, [countdown, armSession, setBaseline]);
