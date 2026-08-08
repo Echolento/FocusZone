@@ -14,23 +14,14 @@ interface HomeScreenProps {
   onSettings: () => void;
 }
 
-const DIAL_SIZE = 240;
+const DIAL_SIZE = 300;
 const DIAL_CENTER = DIAL_SIZE / 2;
 const DIAL_TICK_COUNT = 48;
-const DIAL_TICK_RADIUS = 96;
-const DIAL_LABEL_RADIUS = 69;
+const DIAL_TICK_RADIUS = DIAL_SIZE * 0.4;
+const DIAL_LABEL_RADIUS = DIAL_SIZE * 0.2875;
+const DIAL_DEAD_RADIUS = DIAL_SIZE * 0.3;
 const DIAL_STEP_DEGREES = 360 / DURATION_PRESETS.length;
 const DIAL_LABELS = DURATION_PRESETS;
-
-function dialAngle(event: GestureResponderEvent) {
-  return (
-    Math.atan2(
-      event.nativeEvent.locationY - DIAL_CENTER,
-      event.nativeEvent.locationX - DIAL_CENTER,
-    ) *
-    (180 / Math.PI)
-  );
-}
 
 export default function HomeScreen({ onSettings }: HomeScreenProps) {
   const { startSession } = useSession();
@@ -39,16 +30,64 @@ export default function HomeScreen({ onSettings }: HomeScreenProps) {
   const selectedIndexRef = useRef(0);
   const selectedDuration = DURATION_PRESETS[selectedIndex];
 
-  const applyPointer = (event: GestureResponderEvent) => {
-    const angle = dialAngle(event);
-    const deg = ((angle % 360) + 360) % 360;
-    const index =
-      Math.round(deg / DIAL_STEP_DEGREES) % DURATION_PRESETS.length;
-    setLiveAngle(deg);
+  const rotationRef = useRef(selectedIndex * DIAL_STEP_DEGREES);
+  const lastSample = useRef(0);
+  const pointerActive = useRef(false);
+
+  const angleOf = (event: GestureResponderEvent) => {
+    const dx = event.nativeEvent.locationX - DIAL_CENTER;
+    const dy = event.nativeEvent.locationY - DIAL_CENTER;
+    return (Math.atan2(dy, dx) * 180) / Math.PI;
+  };
+
+  const inDeadZone = (event: GestureResponderEvent) => {
+    const dx = event.nativeEvent.locationX - DIAL_CENTER;
+    const dy = event.nativeEvent.locationY - DIAL_CENTER;
+    return Math.sqrt(dx * dx + dy * dy) <= DIAL_DEAD_RADIUS;
+  };
+
+  const commitRotation = () => {
+    const raw =
+      Math.round(rotationRef.current / DIAL_STEP_DEGREES);
+    const index = Math.max(
+      0,
+      Math.min(DURATION_PRESETS.length - 1, raw),
+    );
     if (index !== selectedIndexRef.current) {
       selectedIndexRef.current = index;
       setSelectedIndex(index);
     }
+  };
+
+  const applyPointer = (event: GestureResponderEvent) => {
+    if (inDeadZone(event)) {
+      pointerActive.current = false;
+      lastSample.current = angleOf(event);
+      return;
+    }
+    const angle = angleOf(event);
+    if (!pointerActive.current) {
+      pointerActive.current = true;
+      lastSample.current = angle;
+      return;
+    }
+    let delta = angle - lastSample.current;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    lastSample.current = angle;
+
+    rotationRef.current = Math.max(
+      0,
+      Math.min(360, rotationRef.current + delta),
+    );
+    setLiveAngle(rotationRef.current);
+    commitRotation();
+  };
+
+  const finishPointer = () => {
+    pointerActive.current = false;
+    commitRotation();
+    setLiveAngle(null);
   };
 
   const panResponder = useRef(
@@ -57,12 +96,8 @@ export default function HomeScreen({ onSettings }: HomeScreenProps) {
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: applyPointer,
       onPanResponderMove: applyPointer,
-      onPanResponderRelease: () => {
-        setLiveAngle(null);
-      },
-      onPanResponderTerminate: () => {
-        setLiveAngle(null);
-      },
+      onPanResponderRelease: finishPointer,
+      onPanResponderTerminate: finishPointer,
     }),
   ).current;
 
@@ -207,10 +242,10 @@ const styles = StyleSheet.create({
   },
   dialTrack: {
     position: 'absolute',
-    width: 192,
-    height: 192,
-    borderRadius: 96,
-    borderWidth: 24,
+    width: DIAL_SIZE * 0.8,
+    height: DIAL_SIZE * 0.8,
+    borderRadius: DIAL_SIZE * 0.4,
+    borderWidth: DIAL_SIZE * 0.1,
     borderColor: '#1A1A2E',
   },
   dialTick: {
@@ -259,7 +294,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   startBtn: {
-    width: '100%',
+    width: DIAL_SIZE,
     backgroundColor: '#4AFF8A',
     borderRadius: 16,
     paddingVertical: 18,
