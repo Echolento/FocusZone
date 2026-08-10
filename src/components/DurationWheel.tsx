@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   FlatList,
@@ -44,9 +44,20 @@ function WheelColumn({
   onChange: (value: number) => void;
 }) {
   const data = useMemo(() => padValues(count), [count]);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(
+    new Animated.Value(initialPadIndex(value, count) * ROW_HEIGHT),
+  ).current;
   const listRef = useRef<FlatList<number>>(null);
   const snapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const index = initialPadIndex(value, count);
+    scrollY.setValue(index * ROW_HEIGHT);
+    listRef.current?.scrollToOffset({
+      offset: index * ROW_HEIGHT,
+      animated: false,
+    });
+  }, [value, count, scrollY]);
 
   const snapToCenter = (offsetY: number) => {
     const index = Math.round(offsetY / ROW_HEIGHT);

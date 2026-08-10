@@ -4,9 +4,26 @@ import { useSession } from '../SessionContext';
 import { END_LONG_PRESS_MS } from '../types';
 
 function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
-  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  if (h > 0) {
+    return `${h.toString()}:${m.toString().padStart(2, '0')}:${s
+      .toString()
+      .padStart(2, '0')}`;
+  }
+  return `${m.toString().padStart(2, '0')}:${s
+    .toString()
+    .padStart(2, '0')}`;
+}
+
+function formatDuration(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h > 0) {
+    return `${h}h ${m.toString().padStart(2, '0')}m`;
+  }
+  return `${m} min`;
 }
 
 export default function ActiveSessionScreen() {
@@ -36,7 +53,7 @@ export default function ActiveSessionScreen() {
         <Text style={styles.statusBadge}>IN ZONE</Text>
         <Text style={styles.timer}>{formatTime(session.timeRemaining)}</Text>
         <Text style={styles.durationLabel}>
-          {session.durationMinutes} min session
+          {formatDuration(session.durationMinutes)} session
         </Text>
         {session.violationsCount > 0 && (
           <Text style={styles.violationNote}>
