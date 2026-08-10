@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "FocusZone",
+    "name": "Focus Zone",
     "slug": "FocusZone",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,8 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.USE_FULL_SCREEN_INTENT"
       ],
-      "package": "com.anonymous.FocusZone"
+      "package": "com.anonymous.FocusZone",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,7 +38,7 @@
         "expo-build-properties",
         {
           "android": {
-            "buildArchs": ["arm64-v8a"]
+            "buildArchs": ["arm64-v8a", "armeabi-v7a"]
           }
         }
       ]

@@ -109,7 +109,7 @@ function WheelColumn({
   };
 
   return (
-    <FlatList
+    <Animated.FlatList
       ref={listRef}
       style={styles.column}
       data={data}
